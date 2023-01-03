@@ -1,3 +1,8 @@
+.annotation > text {
+    font-family: monospace;
+    font-size: 12px;
+}
+
 /* annotation label */
 .annotation > .label {
     stroke-width: 0.75;
@@ -12,8 +17,4 @@
 }
 .annotation:hover > .span {
     opacity: 0.45;
-}
-
-.labeltype {
-    font-family: monospace;
 }
