@@ -1,0 +1,11 @@
+.annotation {
+    opacity: 0.2;
+}
+
+.annotation:hover {
+    opacity: 0.4;
+}
+
+.labeltype {
+    font-family: monospace;
+}
