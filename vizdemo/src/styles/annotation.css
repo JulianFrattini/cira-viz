@@ -1,9 +1,17 @@
-.annotation {
-    opacity: 0.2;
+/* annotation label */
+.annotation > .label {
+    stroke-width: 0.75;
+}
+.annotation:hover > .label {
+    stroke-width: 2px;
 }
 
-.annotation:hover {
-    opacity: 0.4;
+/* span within the sentence */
+.annotation > .span {
+    opacity: 0.1;
+}
+.annotation:hover > .span {
+    opacity: 0.45;
 }
 
 .labeltype {
