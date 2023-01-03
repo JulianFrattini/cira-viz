@@ -9,7 +9,7 @@ const spanpadding = 2;
 function Annotation({ x, width, y, type }) { 
     const textlength = (text) => {
         // calculates the length of a monospaced text
-        return text.length * 6.4
+        return text.length * 6.6
     }
     const labeltype = labeltypes.filter(l => l.label === type)[0];
     const labelstring = (width < textlength(type)+2) ? labeltype.short : type;
