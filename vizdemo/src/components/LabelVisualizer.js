@@ -12,6 +12,11 @@ function LabelVisualizer({text}) {
             type: "Condition",
             start: 18,
             end: 27
+        }, {
+            id: 2,
+            type: "Cause1",
+            start: 3,
+            end: 27
         }
     ]
 
@@ -27,7 +32,7 @@ function LabelVisualizer({text}) {
 
         {
             labels.map((item, index) => {
-                return <Annotation key={index} x={getposition(item.start)} y="40" width={getposition(item.end)-getposition(item.start)} level="0" type={item.type}></Annotation>
+                return <Annotation key={index} x={getposition(item.start)} y="40" width={getposition(item.end)-getposition(item.start)} level={item.type.startsWith("Cause") ? "1" : "0"} type={item.type}></Annotation>
             })
         }
       </svg>
