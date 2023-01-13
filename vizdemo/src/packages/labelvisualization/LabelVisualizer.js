@@ -22,12 +22,12 @@ function LabelVisualizer({ text, labels }) {
 
     return (
         <svg width="800" height="60">
-            <text id={svgsentenceid} x="5" y="55" fill="black">{text}</text>
             {
                 renderlabels.map((item, index) => {
                     return <Annotation key={index} x={getposition(item.start)} y="40" width={getposition(item.end) - getposition(item.start)} type={item.type}></Annotation>
                 })
             }
+            <text id={svgsentenceid} x="5" y="55" fill="black">{text}</text>
         </svg>
     );
 }
