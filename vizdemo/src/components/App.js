@@ -5,6 +5,8 @@ import mocklabels from "../util/mocklabels"
 
 import CEGVisualizer from '../packages/graphvisualization/CEGVisualizer';
 import mockceg from '../util/mockceg';
+import mockceg2 from '../util/mockceg2';
+import mockceg3 from '../util/mockceg3';
 
 function App() {
 
