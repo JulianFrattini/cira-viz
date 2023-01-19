@@ -109,23 +109,30 @@ class CEG {
 }
 
 function CEGVisualizer({ ceg }) {
+  // parse the cause-effect graph
   let cegraph = new CEG(ceg)
-  /*console.log(cegraph)
-  console.log(cegraph.width())
-  console.log(cegraph.root.maxdepth())*/
 
-  //console.log(cegraph.root.getnodesatdepth(2))
-
+  // determine the x and y positions of all nodes within the cause-tree
   const causeypos = cegraph.root.gety(0)
   const causexpos = cegraph.root.getx(cegraph.root.maxdepth()-1)
   
-  const graphheight = Math.max.apply(Math, Object.values(causeypos))
+  // calculate how many nodes will be stacked on top of each other to determine the appropriate height of the overall graph visualization
+  const causetreeheight = Math.max.apply(Math, Object.values(causeypos))
+  const effectstackheight = cegraph.effects.length
+  const maxcegheight = Math.max(causetreeheight, effectstackheight)
+
+  // calculate the width and height of the graph visualization
+  const graphwidth = 20+(cegraph.root.maxdepth()+1)*(nodewidth+30)
+  const graphheight = 10+(nodeheight+10)*(maxcegheight+1)
 
   return (
-    <svg width="800" height={10+(nodeheight+10)*(graphheight+1)}>
+    <svg width={graphwidth} height={graphheight}>
       {cegraph.causes.map((item, index) => {
-        let nodex = 10+causexpos[item.id]*(nodewidth+30)
-        let nodey = 10+causeypos[item.id]*(nodeheight+10)
+        // determine the position (center) of each node
+        let nodex = 10+causexpos[item.id]*(nodewidth+30)+nodewidth/2
+        let nodey = 10+causeypos[item.id]*(nodeheight+10)+nodeheight/2
+
+        // render the nodes
         if(item.eventnode) {
           return <EventNode node={item} x={nodex} y={nodey}></EventNode>
         } else {
@@ -133,10 +140,16 @@ function CEGVisualizer({ ceg }) {
         }
       })}
       {cegraph.effects.map((item, index) => {
-        let nodex = 10 + cegraph.root.maxdepth()*(nodewidth+30)
-        let rooty = 10 + causeypos[cegraph.root.id]*(nodeheight+10)
+        let nodex = 10 + cegraph.root.maxdepth()*(nodewidth+30)+(nodewidth/2)
+
+        // determine the y-position of the root node of the cause tree
+        let rooty = 10 + causeypos[cegraph.root.id]*(nodeheight+10)+(nodeheight/2)
+        // determine the y-position of the first effect, which is the top-most node
         let nodeybase = rooty - ((cegraph.effects.length-1)/2)*(nodeheight+10)
+        // determine the y-position of the current effect, which is located at a given index
         let nodey = nodeybase + index*(nodeheight+10)
+
+        // render the nodes
         return <EventNode node={item} x={nodex} y={nodey}></EventNode>
       })}
     </svg>
