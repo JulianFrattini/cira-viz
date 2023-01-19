@@ -2,9 +2,6 @@ import React from "react"
 
 import '../styles/node.css'
 
-const nodewidth = 200
-const nodeheight = 70
-
 function Junctor({ node, x, y }) {  
     return (
         <g>

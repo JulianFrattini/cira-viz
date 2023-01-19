@@ -18,6 +18,8 @@ function App() {
       <LabelVisualizer text="If the red button is pushed the system shuts down." labels={mocklabels}></LabelVisualizer>
 
       <h2>Cause-Effect Graph Visualization</h2>
+      <CEGVisualizer ceg={mockceg}></CEGVisualizer>
+      <CEGVisualizer ceg={mockceg2}></CEGVisualizer>
       <CEGVisualizer ceg={mockceg3}></CEGVisualizer>
     </div>
   );

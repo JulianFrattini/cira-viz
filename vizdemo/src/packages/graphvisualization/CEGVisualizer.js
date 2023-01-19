@@ -2,9 +2,12 @@ import React from "react"
 
 import EventNode from "./components/eventnode"
 import Junctor from "./components/junctor"
+import CEGEdge from "./components/edge"
 
 const nodewidth = 200
 const nodeheight = 70
+const nodexbuffer = 50
+const nodeybuffer = 10
 
 class Node {
   constructor(nodeobj) {
@@ -34,11 +37,11 @@ class Node {
       return 1
     }
 
-    this.getnodesatdepth = function(depth) {
-      if(depth > 0) {
+    this.getnodesatdepth = function (depth) {
+      if (depth > 0) {
         let dnodes = []
         this.incoming.forEach((child) => {
-          dnodes = dnodes.concat(child.getnodesatdepth(depth-1))
+          dnodes = dnodes.concat(child.getnodesatdepth(depth - 1))
         })
         return dnodes
       } else {
@@ -46,7 +49,7 @@ class Node {
       }
     }
 
-    this.gety = function(y) {
+    this.gety = function (y) {
       let positions = {}
 
       if (this.incoming.length === 0) {
@@ -55,8 +58,8 @@ class Node {
         // determine the positions of all children
         let offset = 0
         this.incoming.forEach((child, index) => {
-          let childpositions = child.gety(y+index+offset)
-          offset = Math.max.apply(Math, Object.values(childpositions))-y-index
+          let childpositions = child.gety(y + index + offset)
+          offset = Math.max.apply(Math, Object.values(childpositions)) - y - index
           positions = Object.assign(positions, childpositions)
         })
 
@@ -64,15 +67,15 @@ class Node {
         let childids = this.incoming.map((child) => child.id)
         let immediatechildpositions = Object.keys(positions).
           filter((key) => childids.includes(key)).
-          reduce((cur, key) => {return Object.assign(cur, {[key]: positions[key]})}, {})
+          reduce((cur, key) => { return Object.assign(cur, { [key]: positions[key] }) }, {})
         let values = Object.values(immediatechildpositions)
-        positions[this.id] = (Math.max.apply(Math, values)+Math.min.apply(Math, values))/2
+        positions[this.id] = (Math.max.apply(Math, values) + Math.min.apply(Math, values)) / 2
       }
 
       return positions
     }
 
-    this.getx = function(x) {
+    this.getx = function (x) {
       let positions = {}
 
       if (this.incoming.length === 0) {
@@ -80,16 +83,24 @@ class Node {
       } else {
         // determine the positions of all children
         this.incoming.forEach((child) => {
-          let childpositions = child.getx(x-1)
+          let childpositions = child.getx(x - 1)
           positions = Object.assign(positions, childpositions)
         })
 
         // determine own position
         positions[this.id] = x
       }
-      
+
       return positions
     }
+  }
+}
+
+class Edge {
+  constructor(edge) {
+    this.origin = edge.origin
+    this.target = edge.target
+    this.negated = edge.negated
   }
 }
 
@@ -103,9 +114,21 @@ class CEG {
     this.root = this.getnode(cegobj.root)
     cegobj.edges.map((edge) => this.getnode(edge.origin).setout(this.getnode(edge.target)))
 
+    this.edges = cegobj.edges.map((edge) => new Edge(edge))
+
     this.effects = this.nodes.filter((node) => node.outgoing === null)
     this.causes = this.nodes.filter((node) => node.outgoing != null)
   }
+}
+
+const convertpositionx = function (x) {
+  let nodex = 10 + x * (nodewidth + nodexbuffer) + nodewidth / 2
+  return nodex
+}
+
+const convertpositiony = function (y) {
+  let nodey = 10 + y * (nodeheight + nodeybuffer) + nodeheight / 2
+  return nodey
 }
 
 function CEGVisualizer({ ceg }) {
@@ -113,45 +136,80 @@ function CEGVisualizer({ ceg }) {
   let cegraph = new CEG(ceg)
 
   // determine the x and y positions of all nodes within the cause-tree
+  const causexpos = cegraph.root.getx(cegraph.root.maxdepth() - 1)
   const causeypos = cegraph.root.gety(0)
-  const causexpos = cegraph.root.getx(cegraph.root.maxdepth()-1)
-  
-  // calculate how many nodes will be stacked on top of each other to determine the appropriate height of the overall graph visualization
-  const causetreeheight = Math.max.apply(Math, Object.values(causeypos))
-  const effectstackheight = cegraph.effects.length
-  const maxcegheight = Math.max(causetreeheight, effectstackheight)
+
+  // convert the indices to real positions
+  Object.keys(causexpos).forEach(function (key, index) {
+    causexpos[key] = convertpositionx(causexpos[key])
+  })
+  Object.keys(causeypos).forEach(function (key, index) {
+    causeypos[key] = convertpositiony(causeypos[key])
+  })
+
+  let nodex = Math.max.apply(Math, Object.values(causexpos)) + nodexbuffer + nodewidth
+
+  // determine the x and y positions of all effects
+  cegraph.effects.forEach((item, index) => {
+    //let nodex = 10 + cegraph.root.maxdepth() * (nodewidth + 30) + (nodewidth / 2)
+
+    // determine the y-position of the root node of the cause tree
+    let rooty = causeypos[cegraph.root.id]
+    // determine the y-position of the first effect, which is the top-most node
+    let nodeybase = rooty - ((cegraph.effects.length - 1) / 2) * (nodeheight + 10)
+    // determine the y-position of the current effect, which is located at a given index
+    let nodey = nodeybase + index * (nodeheight + 10)
+
+    causexpos[item.id] = nodex
+    causeypos[item.id] = nodey
+  })
 
   // calculate the width and height of the graph visualization
-  const graphwidth = 20+(cegraph.root.maxdepth()+1)*(nodewidth+30)
-  const graphheight = 10+(nodeheight+10)*(maxcegheight+1)
+  const graphwidth = Math.max.apply(Math, Object.values(causexpos)) + nodewidth/2 + 10
+  const graphheight = Math.max.apply(Math, Object.values(causeypos)) + nodeheight/2 + 10
 
   return (
     <svg width={graphwidth} height={graphheight}>
-      {cegraph.causes.map((item, index) => {
-        // determine the position (center) of each node
-        let nodex = 10+causexpos[item.id]*(nodewidth+30)+nodewidth/2
-        let nodey = 10+causeypos[item.id]*(nodeheight+10)+nodeheight/2
 
-        // render the nodes
-        if(item.eventnode) {
-          return <EventNode node={item} x={nodex} y={nodey}></EventNode>
-        } else {
-          return <Junctor node={item} x={nodex} y={nodey}></Junctor>
-        }
-      })}
-      {cegraph.effects.map((item, index) => {
-        let nodex = 10 + cegraph.root.maxdepth()*(nodewidth+30)+(nodewidth/2)
+      {
+        // render edges
+        cegraph.edges.map((edge, index) => {
+          const x1 = causexpos[edge.origin]
+          const y1 = causeypos[edge.origin]
+          const x2 = causexpos[edge.target]
+          const y2 = causeypos[edge.target]
 
-        // determine the y-position of the root node of the cause tree
-        let rooty = 10 + causeypos[cegraph.root.id]*(nodeheight+10)+(nodeheight/2)
-        // determine the y-position of the first effect, which is the top-most node
-        let nodeybase = rooty - ((cegraph.effects.length-1)/2)*(nodeheight+10)
-        // determine the y-position of the current effect, which is located at a given index
-        let nodey = nodeybase + index*(nodeheight+10)
+          let weight = 0
+          if (cegraph.nodes.find((node) => node.id === edge.origin).eventnode &&
+            !cegraph.nodes.find((node) => node.id === edge.target).eventnode) {
+            weight = 1
+          } else if (!cegraph.nodes.find((node) => node.id === edge.origin).eventnode &&
+            cegraph.nodes.find((node) => node.id === edge.target).eventnode) {
+            weight = 2
+          } else if (cegraph.nodes.find((node) => node.id === edge.origin).eventnode &&
+          cegraph.nodes.find((node) => node.id === edge.target).eventnode) {
+            weight = 3
+          }
 
-        // render the nodes
-        return <EventNode node={item} x={nodex} y={nodey}></EventNode>
-      })}
+          return <CEGEdge x1={x1} y1={y1} x2={x2} y2={y2} weight={weight} negated={edge.negated}></CEGEdge>
+        })
+      }
+
+      {
+        // render causes
+        cegraph.nodes.map((item, index) => {
+          // determine the position (center) of each node
+          let nodex = causexpos[item.id]
+          let nodey = causeypos[item.id]
+
+          // render the nodes
+          if (item.eventnode) {
+            return <EventNode node={item} x={nodex} y={nodey}></EventNode>
+          } else {
+            return <Junctor node={item} x={nodex} y={nodey}></Junctor>
+          }
+        })}
+
     </svg>
   )
 };

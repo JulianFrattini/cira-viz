@@ -12,8 +12,8 @@ function EventNode({ node, x, y }) {
     return (
         <g>
             <rect x={posx} y={posy} width={nodewidth} height={nodeheight} fill={"#EEEEEE"} stroke="#111111" rx="4"></rect>
-            <text className='centeredtext' x={x} y={y} fill="#000000" fontWeight='bold'>{node.variable}</text>
-            <text className='centeredtext' x={x} y={y+16} fill="#000000">{node.condition}</text>
+            <text className='centeredtext' x={x} y={y-8} fill="#000000" fontWeight='bold'>{node.variable}</text>
+            <text className='centeredtext' x={x} y={y+8} fill="#000000">{node.condition}</text>
         </g>
     )
   };
