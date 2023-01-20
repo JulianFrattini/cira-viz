@@ -2,7 +2,7 @@ import React from "react"
 
 import '../styles/node.css'
 
-function Junctor({ node, x, y }) {  
+function CEGJunctor({ node, x, y }) {  
     return (
         <g>
             <circle cx={x} cy={y} r='30' stroke="black" fill="#EEEEEE"></circle>
@@ -11,4 +11,4 @@ function Junctor({ node, x, y }) {
     )
   };
 
-export default Junctor;
+export default CEGJunctor;

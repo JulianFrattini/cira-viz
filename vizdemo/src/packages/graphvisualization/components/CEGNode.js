@@ -2,10 +2,9 @@ import React from "react"
 
 import '../styles/node.css'
 
-const nodewidth = 200
-const nodeheight = 70
+import { nodewidth, nodeheight } from "../util/cegconfig.js"
 
-function EventNode({ node, x, y }) {  
+function CEGNode({ node, x, y }) {  
     const posx = x-(nodewidth/2)
     const posy = y-(nodeheight/2)
 
@@ -18,4 +17,4 @@ function EventNode({ node, x, y }) {
     )
   };
 
-export default EventNode;
+export default CEGNode;
