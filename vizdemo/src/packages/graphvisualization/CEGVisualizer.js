@@ -44,19 +44,12 @@ function CEGVisualizer({ ceg }) {
       {
         // render edges
         cegraph.edges.map((edge, index) => {
-          let weight = 0
-          if (cegraph.nodes.find((node) => node.id === edge.origin).eventnode &&
-            !cegraph.nodes.find((node) => node.id === edge.target).eventnode) {
-            weight = 1
-          } else if (!cegraph.nodes.find((node) => node.id === edge.origin).eventnode &&
-            cegraph.nodes.find((node) => node.id === edge.target).eventnode) {
-            weight = 2
-          } else if (cegraph.nodes.find((node) => node.id === edge.origin).eventnode &&
-          cegraph.nodes.find((node) => node.id === edge.target).eventnode) {
-            weight = 3
-          }
+          // calculate the correct start- and end- position of the edge
+          const x1 = causexpos[edge.origin] + (cegraph.getnode(edge.origin).eventnode ? nodewidth/2 : 30)
+          const x2 = causexpos[edge.target] - (cegraph.getnode(edge.target).eventnode ? nodewidth/2 : 30)
 
-          return <CEGEdge key={index} x1={causexpos[edge.origin]} y1={causeypos[edge.origin]} x2={causexpos[edge.target]} y2={causeypos[edge.target]} weight={weight} negated={edge.negated}></CEGEdge>
+          // render the edge
+          return <CEGEdge key={index} x1={x1} y1={causeypos[edge.origin]} x2={x2} y2={causeypos[edge.target]} negated={edge.negated}></CEGEdge>
         })
       }
 
