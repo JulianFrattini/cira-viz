@@ -1,12 +1,10 @@
 import '../styles/App.css';
 
 import LabelVisualizer from '../packages/labelvisualization/LabelVisualizer'
-import mocklabels from "../util/mocklabels"
+import mocklabels from "../util/sentences/s6/labels"
 
 import CEGVisualizer from '../packages/graphvisualization/CEGVisualizer';
-import mockceg from '../util/mockceg';
-import mockceg2 from '../util/mockceg2';
-import mockceg3 from '../util/mockceg3';
+import mockceg from '../util/sentences/s6/ceg';
 
 function App() {
 
@@ -15,12 +13,10 @@ function App() {
       <h1>CiRA Sentence Visualization Demo</h1>
 
       <h2>Label Visualization</h2>
-      <LabelVisualizer text="If the red button is pushed the system shuts down." labels={mocklabels}></LabelVisualizer>
+      <LabelVisualizer text="If an error is present and the debugger is active or an exception is triggered then a log entry will be created." labels={mocklabels}></LabelVisualizer>
 
       <h2>Cause-Effect Graph Visualization</h2>
       <CEGVisualizer ceg={mockceg}></CEGVisualizer>
-      <CEGVisualizer ceg={mockceg2}></CEGVisualizer>
-      <CEGVisualizer ceg={mockceg3}></CEGVisualizer>
     </div>
   );
 }

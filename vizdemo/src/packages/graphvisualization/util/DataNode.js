@@ -61,9 +61,9 @@ export class DataNode {
 
       // determine own position
       let childids = this.incoming.map((child) => child.id);
-      let immediatechildpositions = Object.keys(positions).
-        filter((key) => childids.includes(key)).
-        reduce((cur, key) => { return Object.assign(cur, { [key]: positions[key] }); }, {});
+      let immediatechildpositions = Object.keys(positions)
+        .filter((key) => childids.includes(key))
+        .reduce((cur, key) => { return Object.assign(cur, { [key]: positions[key] }); }, {});
       let values = Object.values(immediatechildpositions);
       positions[this.id] = (Math.max.apply(Math, values) + Math.min.apply(Math, values)) / 2;
     }
