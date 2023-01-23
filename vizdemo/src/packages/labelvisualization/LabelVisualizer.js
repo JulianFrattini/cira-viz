@@ -24,7 +24,7 @@ function LabelVisualizer({ text, labels }) {
         <svg width="800" height="60">
             {
                 renderlabels.map((item, index) => {
-                    return <Annotation key={index} x={getposition(item.start)} y="40" width={getposition(item.end) - getposition(item.start)} type={item.type}></Annotation>
+                    return <Annotation key={index} x={getposition(item.begin)} y="40" width={getposition(item.end) - getposition(item.begin)} type={item.name}></Annotation>
                 })
             }
             <text id={svgsentenceid} x="5" y="55" fill="black">{text}</text>
