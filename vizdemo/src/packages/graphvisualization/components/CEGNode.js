@@ -11,8 +11,8 @@ function CEGNode({ node, x, y }) {
     return (
         <g>
             <rect x={posx} y={posy} width={nodewidth} height={nodeheight} fill={"#EEEEEE"} stroke="#111111" rx="4"></rect>
-            <text className='centeredtext' x={x} y={y-8} fill="#000000" fontWeight='bold'>{node.variable}</text>
-            <text className='centeredtext' x={x} y={y+8} fill="#000000">{node.condition}</text>
+            <text id="variable" className='centeredtext' x={x} y={y-8} fill="#000000" fontWeight='bold'>{node.variable}</text>
+            <text id="condition" className='centeredtext' x={x} y={y+8} fill="#000000">{node.condition}</text>
         </g>
     )
   };
