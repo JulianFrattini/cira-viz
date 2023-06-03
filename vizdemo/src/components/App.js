@@ -1,5 +1,7 @@
 import '../styles/App.css';
 
+import React  from 'react';
+
 import LabelVisualizer from '../packages/labelvisualization/LabelVisualizer'
 import mocklabels from "../util/sentences/s6/labels"
 

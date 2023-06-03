@@ -1,5 +1,7 @@
 import '../styles/annotation.css'
 
+import React  from 'react';
+
 import labeltypes from '../util/labeltypes'
 
 const labeltypeheight = 16
